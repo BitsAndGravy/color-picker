@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Screen Color Picker</title>
+</head>
+<body>
+
+    <button id="picker-btn">Pick a Color from Screen</button>
+    <p>Selected Color: <span id="color-code">#000000</span></p>
+
+    <script>
+        const button = document.getElementById('picker-btn');
+        const result = document.getElementById('color-code');
+
+        // Check if the browser supports the EyeDropper API
+        if (!window.EyeDropper) {
+            result.textContent = "Your browser does not support the EyeDropper API.";
+            button.disabled = true;
+        } else {
+            const eyeDropper = new EyeDropper();
+
+            button.addEventListener('click', async () => {
+                try {
+                    // Open the screen sampler tool
+                    const selection = await eyeDropper.open();
+                    // Grab the hex code result
+                    result.textContent = selection.sRGBHex;
+                    result.style.color = selection.sRGBHex;
+                } catch (error) {
+                    // Handle user hitting 'Esc' or closing the tool
+                    console.log("Color selection cancelled or failed:", error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
