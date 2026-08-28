@@ -3,13 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Screen Color Picker</title>
+
+    <style>
+        .selected-color-div {
+            max-width: 500px;
+            height: 200px;
+            color: black;
+            background-color: grey;
+            align-items: center;
+            border-radius: 30px;
+            border-color: black;
+        }
+    </style>
+
+
 </head>
 <body>
-
     <button id="picker-btn">Pick a Color from Screen</button>
     <p>Selected Color: <span id="color-code">#000000</span></p>
+    <div id="selectedColorDiv" class="selected-color-div"></div>
+    <br>
+    <p>Opposite Color: <span id="opposite-color-code">#ffffff</span></p>
+    <div id="oppositeColorDiv" class="selected-color-div"></div>
 
-    <script>
+        <script>
         const button = document.getElementById('picker-btn');
         const result = document.getElementById('color-code');
 
@@ -25,14 +42,38 @@
                     // Open the screen sampler tool
                     const selection = await eyeDropper.open();
                     // Grab the hex code result
+                    let selectedColor = selection.sRGBHex;
                     result.textContent = selection.sRGBHex;
-                    result.style.color = selection.sRGBHex;
+                    //result.style.color = selection.sRGBHex;
+                    document.getElementById('selectedColorDiv').style.backgroundColor = selectedColor;
+                    getOppositeColor(selectedColor);
                 } catch (error) {
                     // Handle user hitting 'Esc' or closing the tool
                     console.log("Color selection cancelled or failed:", error);
                 }
             });
         }
+
+        function getOppositeColor(hex) {
+            // Remove the '#' if it's there
+            const cleanHex = hex.replace('#', '');
+            
+            // Convert hex string to an integer
+            const decimalColor = parseInt(cleanHex, 16);
+            
+            // Invert the bits (0xFFFFFF is 16777215 in decimal)
+            const oppositeDecimal = 0xFFFFFF ^ decimalColor;
+            
+            // Convert back to hex, pad with leading zeros, and add '#'
+            const oppositeHex = oppositeDecimal.toString(16).padStart(6, '0');
+            
+            //return `#${oppositeHex}`;
+            document.getElementById('oppositeColorDiv').style.backgroundColor = '#' + oppositeHex;
+            document.getElementById('opposite-color-code').textContent = oppositeHex;
+            }
+
     </script>
+
+
 </body>
 </html>
